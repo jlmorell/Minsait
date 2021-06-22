@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>HTML</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+</head>
+
+<body>
+  <p>Cliente</p>
+
+<form id="Cliente">
+    <input type="hidden" value="" name="Id" Id="id">
+    <label>Nombre:</label>
+    <br>
+    <input type="text" name="Nombre" id = "Nombre">
+    <br>
+    <label>RFC:</label>
+    <br>
+    <input type="text" name="RFC" id = "RFC">
+    <br>
+    <label>Email:</label>
+    <br>
+    <input type="text" name="Correo" id = "Email">
+    <br>
+    <input type="button" value="Guardar cliente" onclick="Guardar();">
+</form>
+
+<br>
+
+<p>Contacto</p>
+
+<form id="Contacto">
+    <input type="hidden" value="" name="Id" Id="id">
+    <input type="hidden" value="" name="IdCliente" Id="idCliente">
+    <label>Nombre:</label>
+    <br>
+    <input type="text" name="Nombre" id = "Nombre">
+    <br>
+    <label>Email:</label>
+    <br>
+    <input type="text" name="Correo" id = "Email">
+    <br>
+    <label>Movil:</label>
+    <br>
+    <input type="text" name="TelefonoMovil" id = "TelefonoMovil">
+    <br>
+    <br>
+    <label>Telefono Oficina:</label>
+    <br>
+    <input type="text" name="TelefonoOficina" id = "TelefonoOficina">
+    <br>
+    <input type="button" value="Guardar cliente" onclick="GuardarContacto();">
+</form>
+
+  <div id=ClienteList></div>
+
+  <div id=ContactList></div>
+</body>
+</html>
+
+<script>
+    var urlContacto="https://localhost:44322/Api/Contactoes"
+    var urlCliente="https://localhost:44322/Api/Clientes"
+
+    getCliente();
+
+    getContacto();
+
+function Guardar(){
+    if (document.getElementById("Id").value!=""){
+        EditarCliente();
+    }
+    else{
+        putCliente();
+    }
+}
+
+function GuardarContacto(){
+    if (document.getElementById("Id").value!=""){
+        EditarContacto();
+    }
+    else{
+        putContacto();
+    }
+}
+
+    function putCliente(){
+        fetch(urlCliente,{
+            method: "POST",
+            body: JSON.stringify({Nombre: document.getElementById("Nombre").value, RFC: document.getElementById("RFC").value, Email: document.getElementById("Email").value}),
+            headers:{
+                'Accept':"application/json",
+                "Content-Type":"application/json"
+
+            }
+        }).then(function(response){
+            if(response.ok){
+                return response.text();
+            }
+        }).then(function(MyClient){
+         console.log(MyClient);
+         getCliente()
+         document.getElementById("Id").value="";
+         document.getElementById("Nombre").value="";
+         document.getElementById("RFC").value="";
+         document.getElementById("Email").value="";
+        })
+    }
+
+    function putContacto(){
+        fetch(urlContacto,{
+            method: "POST",
+            body: JSON.stringify({Nombre: document.getElementById("Nombre").value, Email: document.getElementById("Email").value,TelefonoMovil: document.getElementById("TelefonoMovil").value,TelefonoOficina: document.getElementById("TelefonoOficina").value }),
+            headers:{
+                'Accept':"application/json",
+                "Content-Type":"application/json"
+
+            }
+        }).then(function(response){
+            if(response.ok){
+                return response.text();
+            }
+        }).then(function(MyContact){
+         console.log(MyContact);
+         getContacto()
+         document.getElementById("Id").value="";
+         document.getElementById("Nombre").value="";
+         document.getElementById("RFC").value="";
+         document.getElementById("Email").value="";
+        })
+    }
+
+function DeleteCliente(id){
+    fetch(urlCliente,{
+            method: "DELETE",
+            body: JSON.stringify(
+                {
+                    Id=id,
+                }
+            ),
+            headers:{
+                'Accept':"application/json",
+                "Content-Type":"application/json"
+
+            }
+        }).then(function(response){
+            if(response.ok){
+                return response.text();
+            }
+        }).then(function(MyClient){
+         console.log(MyClient);
+         getCliente()
+        })
+}
+
+function DeleteContacto(id){
+    fetch(urlCliente,{
+            method: "DELETE",
+            body: JSON.stringify(
+                {
+                    Id=id,
+                }
+            ),
+            headers:{
+                'Accept':"application/json",
+                "Content-Type":"application/json"
+
+            }
+        }).then(function(response){
+            if(response.ok){
+                return response.text();
+            }
+        }).then(function(MyContact){
+         console.log(MyContact);
+         getContacto()
+        })
+}
+
+function EditCliente(id,Nombre, rfc, email){
+    document.getElementById("Id").value=id;
+    document.getElementById("Nombre").value=Nombre;
+    document.getElementById("RFC").value=rfc;
+    document.getElementById("Email").value=email;
+}
+
+function EditContacto(id,Nombre, email, TelefonoMovil, TelefonoOficina){
+    document.getElementById("Id").value=id;
+    document.getElementById("Nombre").value=Nombre;
+    document.getElementById("Email").value=email;
+    document.getElementById("TelefonoMovil").value=TelefonoMovil;
+    document.getElementById("TelefonoOficina").value=TelefonoOficina;
+}
+
+function EditarCliente(){
+    fetch(urlCliente,{
+            method: "PUT",
+            body: JSON.stringify(
+                {
+                    Id=document.getElementById("Id").value,
+                    Nombre=document.getElementById("Nombre").value,
+                    RFC=document.getElementById("RFC").value,
+                    Email=document.getElementById("Email").value,
+                }
+            ),
+            headers:{
+                'Accept':"application/json",
+                "Content-Type":"application/json"
+
+            }
+        }).then(function(response){
+            if(response.ok){
+                return response.text();
+            }
+        }).then(function(MyClient){
+         console.log(MyClient);
+         getCliente()
+         document.getElementById("Id").value="";
+         document.getElementById("Nombre").value="";
+         document.getElementById("RFC").value="";
+         document.getElementById("Email").value="";
+        })
+}
+
+function EditarContacto(){
+    fetch(urlCliente,{
+            method: "PUT",
+            body: JSON.stringify(
+                {
+                    Id=document.getElementById("Id").value,
+                    Nombre=document.getElementById("Nombre").value,
+                    Email=document.getElementById("Email").value,
+                    TelefonoMovil=document.getElementById("TelefonoMovil").value,
+                    TelefonoOficina=document.getElementById("TelefonoOficina").value,
+                }
+            ),
+            headers:{
+                'Accept':"application/json",
+                "Content-Type":"application/json"
+
+            }
+        }).then(function(response){
+            if(response.ok){
+                return response.text();
+            }
+        }).then(function(MyContacto){
+         console.log(MyContacto);
+         getContacto()
+         document.getElementById("Id").value="";
+         document.getElementById("Nombre").value="";
+          document.getElementById("Email").value="";
+          document.getElementById("TelefonoMovil").value="";
+          document.getElementById("TelefonoOficina").value="";
+        })
+}
+
+
+    function getCliente(){
+    fetch(urlCliente).then(function(response){
+        return response.json();
+    }).them(function(MyClient){
+        document.getElementById("ClienteList").innerHTML="";
+        for(i=0; i<MyClient.length;i++){
+        let ClientElement=document.createElement("div");
+        let divSpan=document.createElement("span");
+        let divDelete=document.createElement("button");
+        let divEdit=document.createElement("button");
+        divSpan.innerHTML=MyClient[i].Nombre;
+        divEdit.innerHTML="Edit";
+        divEdit.MIID=MyClient[i].Id;
+        divEdit.MINombre=MyClient[i].Nombre;
+        divEdit.MIRFC=MyClient[i].RFC;
+        divEdit.MIEMAIL=MyClient[i].Email;
+        divEdit.addEventListener("click",function(EditB){
+            EditCliente(EditB.target.MIID,EditB.target.MINombre,EditB.target.MIRFC,EditB.target.MIEMAIL);
+        })
+        divDelete.innerHTML="Delete";
+        divDelete.MIID=MyClient[i].Id;
+        divDelete.addEventListener("click",function(deleteB){
+            DeleteCliente(deleteB.target.MIID);
+        })
+        ClientElement.appendChild(divSpan);
+        ClientElement.appendChild(divDelete);
+        ClientElement.appendChild(divEdit);
+
+        document.getElementById("ClienteList").appendChild(ClientElement);
+    }
+    })
+}
+
+    function getContacto(){
+    fetch(urlContacto).then(function(response){
+        return response.json();
+    }).them(function(MyContacto){
+        document.getElementById("ClienteList").innerHTML="";
+        for(i=0; i<MyContacto.length;i++){
+        let ContactElement=document.createElement("div");
+        let divSpan=document.createElement("span");
+        let divDelete=document.createElement("button");
+        let divEdit=document.createElement("button");
+        divSpan.innerHTML=MyClient[i].Nombre;
+        divEdit.innerHTML="Edit";
+        divEdit.MIID=MyContacto[i].Id;
+        divEdit.MINombre=MyContacto[i].Nombre;
+        divEdit.MIEMAIL=MyContacto[i].Email;
+        divEdit.MITelefonoMovil=MyContacto[i].TelefonoMovil;
+        divEdit.MITelefonoOficina=MyContacto[i].TelefonoOficina;
+        divEdit.addEventListener("click",function(EditB){
+            EditContacto(EditB.target.MIID,EditB.target.MINombre,EditB.target.MIEMAIL,EditB.target.MITelefonoMovil,EditB.target.MITelefonoOficina);
+        })
+        divDelete.innerHTML="Delete";
+        divDelete.MIID=MyContacto[i].Id;
+        divDelete.addEventListener("click",function(deleteB){
+            DeleteContacto(deleteB.target.MIID);
+        })
+        ContactElement.appendChild(divSpan);
+        ContactElement.appendChild(divDelete);
+        ContactElement.appendChild(divEdit);
+
+        document.getElementById("ClienteList").appendChild(ClientElement);
+    }
+    })
+}
+</script>
